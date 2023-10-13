@@ -5,8 +5,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.urls import include, path, reverse_lazy
 from django.views.generic.edit import CreateView
 
-
-
 handler404 = 'core.views.error_404' 
 
 handler500 = 'core.views.error_500'

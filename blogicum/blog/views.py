@@ -1,25 +1,24 @@
+import pprint
+from datetime import datetime
 from typing import Any
+
 from django import http
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-from django.http import HttpResponseForbidden, HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
-from django.views.generic import (
-    CreateView, DeleteView, DetailView, ListView, View, UpdateView
-)
-import pprint
-from .models import Category, Comment, Post
-from .forms import CommentForm, PostForm
-from django.urls import reverse
-from datetime import datetime
 from django.contrib.auth.models import User
-from django.urls import reverse_lazy
-from django.db.models import Count
-from django.utils import timezone
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
+from django.db.models import Count
+from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView, View)
+
+from .forms import CommentForm, PostForm
+from .models import Category, Comment, Post
 
 NUM_POSTS_TO_DISPLAY = 5
 app_name = 'blog'
@@ -49,26 +48,26 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
     def get_success_url(self):
-        if self.request.user.username:
-            return reverse_lazy('blog:profile', kwargs={'username': self.request.user.username})
-        else:
-            return reverse_lazy('blog:index')
+        username = self.request.user.username
+        return reverse('blog:profile', kwargs={'username': username}) if username else reverse('blog:index')
 
 
 class CreatePostView(LoginRequiredMixin, CreateView):
     def get(self, request):
-            form = PostForm()
-            return render(request, 'blog/create.html', {'form': form})
+        form = PostForm()
+        return render(request, 'blog/create.html', {'form': form})
 
     def post(self, request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            form.instance.author = self.request.user
-
+            post.author = request.user
             post.save()
 
-            return redirect(reverse('blog:profile', args=[request.user.username]))
+            username = self.request.user.username
+            print(f"Username: {username}")  # Отладочный вывод
+
+            return redirect(reverse('blog:profile', kwargs={'username': username}))
         return render(request, 'blog/create.html', {'form': form})
 
 
@@ -220,11 +219,4 @@ def category_posts_view(request, category_slug):
     }
     
     return render(request, 'blog/category.html', context)
-
-
-
-
-
-
-
 

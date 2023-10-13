@@ -1,8 +1,7 @@
+from core.models import PublishableModel
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
-
-from core.models import PublishableModel
 
 User = get_user_model()
 
@@ -79,7 +78,6 @@ class Post(PublishableModel):
     )
     image = models.ImageField(
         upload_to='post_images/',
-        null=True,
         blank=True  
     )
 
