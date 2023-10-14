@@ -210,7 +210,7 @@ def index(request):
         pub_date__lt=timezone.now(),
         is_published=True,
         category__is_published=True
-        ).order_by('-pub_date').annotate(num_comments=Count('comments'))
+    ).order_by('-pub_date').annotate(num_comments=Count('comments'))
     paginator = Paginator(post_lists, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
