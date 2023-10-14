@@ -110,9 +110,9 @@ class PostDetailView(DetailView):
     def get_object(self, queryset=None):
         post = get_object_or_404(Post, pk=self.kwargs['pk'])
         if (
-            post.author == self.request.user or
-            (post.is_published and post.pub_date <= timezone.now() and
-             post.category.is_published)
+            post.author == self.request.user
+            or (post.is_published and post.pub_date <= timezone.now()
+                and post.category.is_published)
         ):
             return post
         else:
@@ -176,8 +176,8 @@ class EditCommentView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         comment = self.get_object()
         if (
-            self.request.user != comment.author and
-            not self.request.user.is_staff
+            self.request.user != comment.author
+            and not self.request.user.is_staff
         ):
             raise Http404("You don't have permission to edit this comment.")
         return super().form_valid(form)
@@ -198,8 +198,8 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
     def form_valid(self, form):
         comment = self.get_object()
         if (
-            self.request.user != comment.author and
-            not self.request.user.is_staff
+            self.request.user != comment.author
+            and not self.request.user.is_staff
         ):
             raise Http404("You don't have permission to edit this comment.")
         return super().form_valid(form)
