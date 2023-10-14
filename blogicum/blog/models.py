@@ -78,7 +78,7 @@ class Post(PublishableModel):
     )
     image = models.ImageField(
         upload_to='post_images/',
-        blank=True  
+        blank=True
     )
 
     class Meta:
@@ -92,8 +92,10 @@ class Post(PublishableModel):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                             related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='comments')
     text = models.TextField('Текст комментария')
     pub_date = models.DateTimeField(verbose_name='Дата и время публикации',
                                     auto_now_add=True)
