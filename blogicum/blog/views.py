@@ -103,11 +103,16 @@ class PostDetailView(DetailView):
     template_name = 'blog/post_detail.html'
 
     def get_object(self, queryset=None):
-        instance = super().get_object(queryset=queryset)
-        if (not instance.is_published or
-            not instance.category.is_published) and instance.author != self.request.user:
-            return HttpResponseForbidden("Доступ запрещен")
-        return instance
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        if (
+            post.author == self.request.user or
+            (post.is_published and post.pub_date <= timezone.now() and
+            post.category.is_published)
+        ):
+            return post
+        else: 
+            raise Http404("Доступ запрещен")
+
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
